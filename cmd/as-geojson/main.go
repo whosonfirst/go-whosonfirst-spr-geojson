@@ -37,7 +37,14 @@ func main() {
 
 	wr := io.MultiWriter(os.Stdout)
 
-	err = geojson.AsFeatureCollectionWithJSON(ctx, body, *path, r, wr)
+	resolver_func := geojson.JSONPathResolverFunc(*path)
+
+	as_opts := &geojson.AsFeatureCollectionOptions{
+		Reader:           r,
+		Writer:           wr,
+		JSONPathResolver: resolver_func,
+	}
+	err = geojson.AsFeatureCollectionWithJSON(ctx, body, as_opts)
 
 	if err != nil {
 		log.Fatal(err)
