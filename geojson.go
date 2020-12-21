@@ -5,11 +5,15 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	go_geojson "github.com/paulmach/go.geojson"
 	"github.com/tidwall/gjson"
 	"github.com/whosonfirst/go-reader"
 	"github.com/whosonfirst/go-whosonfirst-spr"
+	"github.com/whosonfirst/go-whosonfirst-uri"
 	"io"
+	_ "log"
+	"strconv"
 )
 
 func ToFeatureCollection(ctx context.Context, rsp spr.StandardPlacesResults, r reader.Reader) (*go_geojson.FeatureCollection, error) {
@@ -60,7 +64,26 @@ func AsFeatureCollection(ctx context.Context, rsp spr.StandardPlacesResults, r r
 
 	for _, pl := range rsp.Results() {
 
-		err = fc.WriteFeature(ctx, pl.Path())
+		path := pl.Path()
+
+		if path == "" {
+
+			id, err := strconv.ParseInt(pl.Id(), 10, 64)
+
+			if err != nil {
+				return fmt.Errorf("Unable to determine path for ID '%s'", pl.Id())
+			}
+
+			rel_path, err := uri.Id2RelPath(id)
+
+			if err != nil {
+				return fmt.Errorf("Unable to determine path for ID '%s'", pl.Id())
+			}
+
+			path = rel_path
+		}
+
+		err = fc.WriteFeature(ctx, path)
 
 		if err != nil {
 			return err
