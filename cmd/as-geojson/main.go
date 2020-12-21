@@ -37,7 +37,11 @@ func main() {
 
 	wr := io.MultiWriter(os.Stdout)
 
-	resolver_func := geojson.JSONPathResolverFunc(*path)
+	cb := func(ctx context.Context, path string) (string, error) {
+		return geojson.WhosOnFirstPathWithString(path)
+	}
+
+	resolver_func := geojson.JSONPathResolverFuncWithCallback(*path, cb)
 
 	as_opts := &geojson.AsFeatureCollectionOptions{
 		Reader:           r,

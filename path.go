@@ -6,30 +6,40 @@ import (
 	"github.com/tidwall/gjson"
 	"github.com/whosonfirst/go-whosonfirst-spr"
 	"github.com/whosonfirst/go-whosonfirst-uri"
-	"strconv"
 )
 
 type SPRPathResolver func(context.Context, spr.StandardPlacesResult) (string, error)
 
 type JSONPathResolver func(context.Context, []byte) ([]string, error)
 
+type JSONPathResolverCallback func(context.Context, string) (string, error)
+
+func WhosOnFirstPathWithString(path string) (string, error) {
+
+	id, uri_args, err := uri.ParseURI(path)
+
+	if err != nil {
+		return "", err
+	}
+
+	return uri.Id2RelPath(id, uri_args)
+}
+
 func WhosOnFirstSPRPathResolverFunc() SPRPathResolver {
 
 	fn := func(ctx context.Context, r spr.StandardPlacesResult) (string, error) {
-
-		id, err := strconv.ParseInt(r.Id(), 10, 64)
-
-		if err != nil {
-			return "", err
-		}
-
-		return uri.Id2RelPath(id)
+		return WhosOnFirstPathWithString(r.Id())
 	}
 
 	return fn
 }
 
 func JSONPathResolverFunc(gjson_path string) JSONPathResolver {
+
+	return JSONPathResolverFuncWithCallback(gjson_path, nil)
+}
+
+func JSONPathResolverFuncWithCallback(gjson_path string, cb JSONPathResolverCallback) JSONPathResolver {
 
 	fn := func(ctx context.Context, body []byte) ([]string, error) {
 
@@ -42,7 +52,21 @@ func JSONPathResolverFunc(gjson_path string) JSONPathResolver {
 		paths := make([]string, 0)
 
 		for _, p := range path_rsp.Array() {
-			paths = append(paths, p.String())
+
+			path := p.String()
+
+			if cb != nil {
+
+				new_path, err := cb(ctx, path)
+
+				if err != nil {
+					return nil, err
+				}
+
+				path = new_path
+			}
+
+			paths = append(paths, path)
 		}
 
 		return paths, nil
