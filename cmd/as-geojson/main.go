@@ -22,7 +22,7 @@ import (
 	"os"
 
 	"github.com/whosonfirst/go-reader"
-	"github.com/whosonfirst/go-whosonfirst-spr-geojson/v2"	
+	"github.com/whosonfirst/go-whosonfirst-spr-geojson/v2"
 )
 
 func main() {

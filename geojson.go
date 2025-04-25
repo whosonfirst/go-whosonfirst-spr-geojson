@@ -1,7 +1,6 @@
 package geojson
 
-import (
-)
+import ()
 
 import (
 	"bufio"
@@ -10,13 +9,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	
-	_ "github.com/whosonfirst/go-writer-featurecollection/v3"	
 
-	go_geojson "github.com/paulmach/go.geojson"
+	_ "github.com/whosonfirst/go-writer-featurecollection/v3"
+
+	orb_geojson "github.com/paulmach/orb/geojson"
 	"github.com/whosonfirst/go-reader"
 	"github.com/whosonfirst/go-whosonfirst-spr/v2"
-	"github.com/whosonfirst/go-writer/v3"	
+	"github.com/whosonfirst/go-writer/v3"
 )
 
 type AsFeatureCollectionOptions struct {
@@ -32,7 +31,7 @@ type ToFeatureCollectionOptions struct {
 	Reader           reader.Reader
 }
 
-func ToFeatureCollection(ctx context.Context, rsp spr.StandardPlacesResults, opts *ToFeatureCollectionOptions) (*go_geojson.FeatureCollection, error) {
+func ToFeatureCollection(ctx context.Context, rsp spr.StandardPlacesResults, opts *ToFeatureCollectionOptions) (*orb_geojson.FeatureCollection, error) {
 
 	var buf bytes.Buffer
 	wr := bufio.NewWriter(&buf)
@@ -52,10 +51,10 @@ func ToFeatureCollection(ctx context.Context, rsp spr.StandardPlacesResults, opt
 
 	wr.Flush()
 
-	return go_geojson.UnmarshalFeatureCollection(buf.Bytes())
+	return orb_geojson.UnmarshalFeatureCollection(buf.Bytes())
 }
 
-func ToFeatureCollectionWithJSON(ctx context.Context, body []byte, opts *ToFeatureCollectionOptions) (*go_geojson.FeatureCollection, error) {
+func ToFeatureCollectionWithJSON(ctx context.Context, body []byte, opts *ToFeatureCollectionOptions) (*orb_geojson.FeatureCollection, error) {
 
 	var buf bytes.Buffer
 	wr := bufio.NewWriter(&buf)
@@ -75,7 +74,7 @@ func ToFeatureCollectionWithJSON(ctx context.Context, body []byte, opts *ToFeatu
 
 	wr.Flush()
 
-	return go_geojson.UnmarshalFeatureCollection(buf.Bytes())
+	return orb_geojson.UnmarshalFeatureCollection(buf.Bytes())
 }
 
 func AsFeatureCollection(ctx context.Context, rsp spr.StandardPlacesResults, opts *AsFeatureCollectionOptions) error {

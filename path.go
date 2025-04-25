@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/url"
+
 	"github.com/tidwall/gjson"
 	"github.com/whosonfirst/go-whosonfirst-spr/v2"
 	"github.com/whosonfirst/go-whosonfirst-uri"
-	"net/url"
 )
 
 type SPRPathResolver func(context.Context, spr.StandardPlacesResult) (string, error)
