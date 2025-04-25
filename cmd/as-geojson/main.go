@@ -17,12 +17,12 @@ import (
 	"bufio"
 	"context"
 	"flag"
-	"github.com/whosonfirst/go-reader"
-	"github.com/whosonfirst/go-whosonfirst-spr-geojson"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
+
+	"github.com/whosonfirst/go-reader"
+	"github.com/whosonfirst/go-whosonfirst-spr-geojson/v2"
 )
 
 func main() {
@@ -44,7 +44,7 @@ func main() {
 
 	reader := bufio.NewReader(os.Stdin)
 
-	body, err := ioutil.ReadAll(reader)
+	body, err := io.ReadAll(reader)
 
 	if err != nil {
 		log.Fatal(err)
